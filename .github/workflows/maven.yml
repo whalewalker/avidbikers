@@ -5,9 +5,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: dev,main
+    branches: [main, dev]
   pull_request:
-    branches: dev,main
+    branches: [main, dev]
 
 jobs:
   build:
@@ -27,8 +27,3 @@ jobs:
     - name: Maven Verify
       run: mvn -B clean verify
 
-    - name: Heroku Deployment
-      with:
-        heroku_api_key: ${{secret.HEROKU_API_KEY}}
-        heroku_email: ${{secret.HEROKU_EMAIL}}
-        heroku_app_name: ${{secret.HEROKU_APP_NAME}}
