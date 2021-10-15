@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -18,7 +19,7 @@ public class ProductDto {
     private String name;
 
     @NotBlank(message = "please enter a price")
-    private String price;
+    private BigDecimal price;
 
     @NotBlank(message = "Please provide a product Image")
     private String image;

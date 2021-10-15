@@ -3,11 +3,14 @@ package com.avidbikers.services;
 import com.avidbikers.data.dto.ProductDto;
 import com.avidbikers.data.model.Product;
 import com.avidbikers.data.repository.ProductRepository;
+import com.avidbikers.web.exceptions.AuthException;
+import com.avidbikers.web.exceptions.ProductException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService{
@@ -32,8 +35,18 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public void removeProduct(String productId) {
+    public void removeProduct(String productId) throws ProductException {
+        Product productToRemove = findAProductById(productId);
+        removeAProduct(productToRemove);
+    }
 
+    private void removeAProduct(Product product) {
+        productRepository.delete(product);
+    }
+
+    private Product findAProductById(String productId) throws ProductException {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ProductException("No user found with id" + productId));
     }
 
     @Override
@@ -42,8 +55,9 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public ProductDto findProductById(String productId) {
-        return null;
+    public ProductDto findProductById(String productId) throws ProductException {
+        Product product = findAProductById(productId);
+        return mapper.map(product, ProductDto.class);
     }
 
     @Override
