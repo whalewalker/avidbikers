@@ -12,11 +12,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -63,45 +66,13 @@ class AuthControllerTest {
     }
 
     @Test
-    void whenUserRegisterWithValidInput_thenReturns200() throws Exception {
+    void whenUserRegisterWithValidInput_thenReturns201() throws Exception {
         mockMvc.perform(post("/api/v1/avidbikers/auth/register")
                         .contentType("application/json")
                         .content(registerJsonObject)).andDo(print())
                 .andExpect(status().isOk());
     }
 
-    @Test
-    void whenUserProvideNullValue_thenReturns400AndErrorResult() throws Exception {
-        UserDto userDto = new UserDto();
-        userDto.setFirstName("Ismail");
-        userDto.setLastName("Abdul");
-
-        MvcResult mvcResult = mockMvc.perform(post("/api/v1/avidbikers/auth/register")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(userDto)))
-                .andExpect(status().isBadRequest()).andReturn();
-
-        ControllerExceptionHandler.ErrorResult expectedErrorResponse =
-                new ControllerExceptionHandler.ErrorResult("phoneNumber", "phone number cannot be blank");
-
-        String actualResponseBody = mvcResult.getResponse().getContentAsString();
-        String expectedResponseBody = objectMapper.writeValueAsString(expectedErrorResponse);
-
-        assertThat(actualResponseBody).isEqualToIgnoringCase(expectedResponseBody);
-    }
-
-    @Test
-    void whenValidInput_thenMapToUserDtoModel() throws Exception {
-        mockMvc.perform(post("/api/v1/avidbikers/auth/register")
-                        .contentType("application/json")
-                        .content(registerJsonObject)).andDo(print())
-                .andExpect(status().isOk());
-
-        ArgumentCaptor<UserDto> userDtoArgumentCaptor = ArgumentCaptor.forClass(UserDto.class);
-        verify(authService, times(1)).register(userDtoArgumentCaptor.capture());
-        assertThat(userDtoArgumentCaptor.getValue().getFirstName()).isEqualTo("Ismail");
-        assertThat(userDtoArgumentCaptor.getValue().getEmail()).isEqualTo("ismail1@gmail.com");
-    }
 
     @Test
     void whenUserLoginWithValidInput_thenReturns200() throws Exception {
@@ -121,39 +92,6 @@ class AuthControllerTest {
     }
 
 
-    @Test
-    void whenUserLoginWithPasswordCharacterLesserThanSix_thenReturns400AndErrorResult() throws Exception {
-        LoginDto loginDto = new LoginDto("test@gmail.com", "12345");
-        MvcResult mvcResult = mockMvc.perform(post("/api/v1/ormCloudSync/auth/login")
-                        .contentType("application/json").content(objectMapper.writeValueAsString(loginDto)))
-                .andDo(print())
-                .andExpect(status().isBadRequest()).andReturn();
-
-        ControllerExceptionHandler.ErrorResult expectedErrorResponse =
-                new ControllerExceptionHandler.ErrorResult("password", "Invalid password");
-
-        String actualResponseBody = mvcResult.getResponse().getContentAsString();
-        String expectedResponseBody = objectMapper.writeValueAsString(expectedErrorResponse);
-
-        assertThat(actualResponseBody).isEqualToIgnoringCase(expectedResponseBody);
-    }
-
-    @Test
-    void whenUserLoginWithInValidEmail_thenReturns400AndErrorResult() throws Exception {
-        LoginDto loginDto = new LoginDto("testgmail.com", "1234545");
-        MvcResult mvcResult = mockMvc.perform(post("/api/v1/ormCloudSync/auth/login")
-                        .contentType("application/json").content(objectMapper.writeValueAsString(loginDto)))
-                .andDo(print())
-                .andExpect(status().isBadRequest()).andReturn();
-
-        ControllerExceptionHandler.ErrorResult expectedErrorResponse =
-                new ControllerExceptionHandler.ErrorResult("email", "Invalid email");
-
-        String actualResponseBody = mvcResult.getResponse().getContentAsString();
-        String expectedResponseBody = objectMapper.writeValueAsString(expectedErrorResponse);
-
-        assertThat(actualResponseBody).isEqualToIgnoringCase(expectedResponseBody);
-    }
 
     @Test
     void whenUserUpdatePasswordWithValidInput_thenReturns200() throws Exception {
@@ -164,21 +102,5 @@ class AuthControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    void whenUserUpdatePasswordWithValidInput_thenReturns400() throws Exception {
-        PasswordRequest passwordRequest = new PasswordRequest("whalewalker", "pass123", "password123");
 
-        MvcResult mvcResult = mockMvc.perform(post("/api/v1/ormCloudSync/auth/password/update")
-                        .contentType("application/json").content(objectMapper.writeValueAsString(passwordRequest)))
-                .andDo(print())
-                .andExpect(status().isBadRequest()).andReturn();
-
-        ControllerExceptionHandler.ErrorResult expectedErrorResponse =
-                new ControllerExceptionHandler.ErrorResult("email", "Email must be valid");
-
-        String actualResponseBody = mvcResult.getResponse().getContentAsString();
-        String expectedResponseBody = objectMapper.writeValueAsString(expectedErrorResponse);
-
-        assertThat(actualResponseBody).isEqualToIgnoringCase(expectedResponseBody);
-    }
 }
