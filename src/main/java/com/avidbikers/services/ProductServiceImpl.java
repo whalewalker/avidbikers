@@ -3,14 +3,13 @@ package com.avidbikers.services;
 import com.avidbikers.data.dto.ProductDto;
 import com.avidbikers.data.model.Product;
 import com.avidbikers.data.repository.ProductRepository;
-import com.avidbikers.web.exceptions.AuthException;
 import com.avidbikers.web.exceptions.ProductException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService{
@@ -62,26 +61,46 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public List<ProductDto> getAllProducts() {
-        return null;
+        List<ProductDto> products = new ArrayList<>();
+        for (Product product : productRepository.findAll()) {
+            products.add(mapper.map(product, ProductDto.class));
+        }
+        return products;
     }
 
     @Override
-    public ProductDto updateProduct(String productId, ProductDto updatedProductDetails) {
-        return null;
+    public ProductDto updateProduct(String productId, ProductDto updatedProductDetails) throws ProductException {
+        Product productToUpdate = findAProductById(productId);
+        mapper.map(updatedProductDetails, productToUpdate);
+        Product updatedProduct = productRepository.save(productToUpdate);
+        return mapper.map(updatedProduct, ProductDto.class);
     }
 
-    @Override
-    public ProductDto findProduct(String productId) {
-        return null;
-    }
 
     @Override
     public List<ProductDto> getAllProductsInCategory(String category) {
-        return null;
+        List<ProductDto> products = new ArrayList<>();
+        for (Product product: productRepository.findProductsByCategoryId(category)){
+            products.add(mapper.map(product, ProductDto.class));
+        }
+        return products;
     }
 
     @Override
     public List<ProductDto> getAllProductContainingProductName(String productName) {
-        return null;
+        List<ProductDto> products = new ArrayList<>();
+        for (Product product: productRepository.findAllByName(productName)){
+            products.add(mapper.map(product, ProductDto.class));
+        }
+        return products;
+    }
+
+    @Override
+    public List<ProductDto> getAllProductContainingProductDesc(String phrase) {
+        List<ProductDto> products = new ArrayList<>();
+        for (Product product: productRepository.findProductByDescriptionContaining(phrase)){
+            products.add(mapper.map(product, ProductDto.class));
+        }
+        return products;
     }
 }

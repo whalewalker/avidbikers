@@ -16,11 +16,13 @@ public interface ProductService {
 
     List<ProductDto> getAllProducts();
 
-    ProductDto updateProduct(String productId, ProductDto updatedProductDetails);
+    ProductDto updateProduct(String productId, ProductDto updatedProductDetails) throws ProductException;
 
-    ProductDto findProduct(String productId);
 
     List<ProductDto> getAllProductsInCategory(String category);
 
     List<ProductDto> getAllProductContainingProductName(String productName);
+
+    List<ProductDto> getAllProductContainingProductDesc(String phrase);
+
 }
