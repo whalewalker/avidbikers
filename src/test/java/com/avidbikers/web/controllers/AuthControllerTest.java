@@ -70,7 +70,7 @@ class AuthControllerTest {
         mockMvc.perform(post("/api/v1/avidbikers/auth/register")
                         .contentType("application/json")
                         .content(registerJsonObject)).andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
 
@@ -96,7 +96,7 @@ class AuthControllerTest {
     @Test
     void whenUserUpdatePasswordWithValidInput_thenReturns200() throws Exception {
         PasswordRequest passwordRequest = new PasswordRequest("user@gmail.com", "pass123", "password123");
-        mockMvc.perform(post("/api/v1/ormCloudSync/auth/password/update")
+        mockMvc.perform(post("/api/v1/avidbikers/auth/password/update")
                         .contentType("application/json").content(objectMapper.writeValueAsString(passwordRequest)))
                 .andDo(print())
                 .andExpect(status().isOk());
