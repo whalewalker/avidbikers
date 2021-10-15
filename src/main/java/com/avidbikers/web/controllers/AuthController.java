@@ -34,7 +34,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) {
+    public ResponseEntity<?> login( @RequestBody @Valid LoginDto loginDto) {
         try {
             AuthenticationDetails authenticationDetail = authService.login(loginDto);
             return new ResponseEntity<>(authenticationDetail, HttpStatus.OK);
@@ -44,7 +44,7 @@ public class AuthController {
     }
 
     @PostMapping("/password/update")
-    public ResponseEntity<?> updatePassword(@Valid @RequestBody PasswordRequest passwordRequest){
+    public ResponseEntity<?> updatePassword( @RequestBody @Valid PasswordRequest passwordRequest){
         try {
             authService.updatePassword(passwordRequest);
             return new ResponseEntity<>(new ApiResponse(true, "User password is successfully updated"), HttpStatus.OK);
@@ -57,7 +57,7 @@ public class AuthController {
     public ResponseEntity<?> forgotPassword(@PathVariable String username){
         try {
             Token passwordResetToken = authService.generatePasswordResetToken(username);
-            return new ResponseEntity<>(passwordResetToken, HttpStatus.OK);
+            return new ResponseEntity<>(passwordResetToken, HttpStatus.CREATED  );
         }catch (AuthException exception){
             return new ResponseEntity<>(new ApiResponse(false, exception.getMessage()), HttpStatus.BAD_REQUEST);
         }
