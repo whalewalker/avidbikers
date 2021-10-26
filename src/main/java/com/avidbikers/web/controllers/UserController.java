@@ -1,14 +1,14 @@
 package com.avidbikers.web.controllers;
 
+import com.avidbikers.data.dto.ProductDto;
 import com.avidbikers.data.model.User;
+import com.avidbikers.services.ProductService;
 import com.avidbikers.services.UserService;
+import com.avidbikers.web.payload.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,8 +20,5 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping()
-    public ResponseEntity<?> getAllUser(){
-        return new ResponseEntity<>(List.of("Hello world"), HttpStatus.OK);
-    }
+
 }
