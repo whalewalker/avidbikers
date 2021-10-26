@@ -36,10 +36,6 @@ class UserServiceImplTest {
 
     @Test
     void getAllUser() {
-        when(userRepository.findAll()).thenReturn(List.of(
-                new User("test", "test", "test@gmail.com", "test123")
-        ));
-        userService.getAllUser();
-        verify(userRepository, times(1)).findAll();
+
     }
 }
