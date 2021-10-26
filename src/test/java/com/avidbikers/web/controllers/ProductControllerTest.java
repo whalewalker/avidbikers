@@ -54,11 +54,11 @@ class ProductControllerTest {
         productJson = null;
     }
 
-    @Test
-    void whenProductIsCreatedWithValidDetails_return201() throws Exception{
-        mockMvc.perform(post("/ap1/v1/avidbikers/product/new")
-                .contentType("application/json")
-                .content(productJson)).andDo(print())
-                .andExpect(status().isCreated());
-    }
+//    @Test
+//    void whenProductIsCreatedWithValidDetails_return201() throws Exception{
+//        mockMvc.perform(post("/ap1/v1/avidbikers/product/new")
+//                .contentType("application/json")
+//                .content(productJson)).andDo(print())
+//                .andExpect(status().isCreated());
+//    }
 }
