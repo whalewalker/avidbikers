@@ -1,6 +1,7 @@
 package com.avidbikers.services;
 
 import com.avidbikers.data.dto.ProductDto;
+import com.avidbikers.data.model.Product;
 import com.avidbikers.web.exceptions.ProductException;
 
 import java.util.List;
@@ -11,6 +12,8 @@ public interface ProductService {
     void removeProduct(String productId) throws ProductException;
 
     void removeProduct(String productId, int quantity);
+
+     Product findProduct(String productId) throws ProductException;
 
     ProductDto findProductById(String productId) throws ProductException;
 

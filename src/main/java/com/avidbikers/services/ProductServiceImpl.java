@@ -54,6 +54,11 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    public Product findProduct(String productId) throws ProductException {
+        return findAProductById(productId);
+    }
+
+    @Override
     public ProductDto findProductById(String productId) throws ProductException {
         Product product = findAProductById(productId);
         return mapper.map(product, ProductDto.class);

@@ -1,6 +1,6 @@
 package com.avidbikers.web.controllers;
 
-import com.avidbikers.data.dto.UserDto;
+import com.avidbikers.data.dto.BuyerDto;
 import com.avidbikers.data.model.Token;
 import com.avidbikers.data.repository.UserRepository;
 import com.avidbikers.services.AuthService;
@@ -50,7 +50,7 @@ class AuthControllerTest {
 
     @BeforeEach
     void setUp() throws JsonProcessingException {
-        UserDto userDto = new UserDto();
+        BuyerDto userDto = new BuyerDto();
         userDto.setFirstName("Ismail");
         userDto.setLastName("Abdul");
         userDto.setEmail("ismail1@gmail.com");

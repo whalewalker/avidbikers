@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Data
-public class UserDto {
+public class BuyerDto {
     @NotBlank(message = "First name can not be blank")
     private String firstName;
 

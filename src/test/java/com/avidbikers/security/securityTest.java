@@ -1,5 +1,6 @@
 package com.avidbikers.security;
 
+import com.avidbikers.data.model.Role;
 import com.avidbikers.data.model.User;
 import com.avidbikers.data.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -12,7 +13,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
-import static com.avidbikers.data.model.Role.USER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,7 +35,9 @@ class securityTest {
         mockedUser.setLastName("Abdullah");
         mockedUser.setEmail("ohida2001@gmail.com");
         mockedUser.setPassword("pass1234");
-        mockedUser.getRoles().add(USER);
+        Role role = new Role();
+        role.setName("BUYER");
+        mockedUser.getRoles().add(role);
         MockitoAnnotations.openMocks(this);
     }
 

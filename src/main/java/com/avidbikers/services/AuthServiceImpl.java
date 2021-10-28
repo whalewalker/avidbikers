@@ -1,9 +1,8 @@
 package com.avidbikers.services;
 
-import com.avidbikers.data.dto.UserDto;
-import com.avidbikers.data.model.Token;
-import com.avidbikers.data.model.TokenType;
-import com.avidbikers.data.model.User;
+import com.avidbikers.data.dto.BuyerDto;
+import com.avidbikers.data.dto.SellerDto;
+import com.avidbikers.data.model.*;
 import com.avidbikers.data.repository.TokenRepository;
 import com.avidbikers.data.repository.UserRepository;
 import com.avidbikers.security.CustomUserDetailsService;
@@ -11,7 +10,11 @@ import com.avidbikers.security.JwtTokenProvider;
 import com.avidbikers.security.UserPrincipal;
 import com.avidbikers.web.exceptions.AuthException;
 import com.avidbikers.web.exceptions.TokenException;
-import com.avidbikers.web.payload.*;
+import com.avidbikers.web.exceptions.UserRoleNotFoundException;
+import com.avidbikers.web.payload.AuthenticationDetails;
+import com.avidbikers.web.payload.LoginDto;
+import com.avidbikers.web.payload.PasswordRequest;
+import com.avidbikers.web.payload.PasswordResetRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +28,20 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static com.avidbikers.data.model.Role.USER;
 
 @Service
 @Slf4j
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private RoleService roleService;
+    
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -43,8 +52,9 @@ public class AuthServiceImpl implements AuthService{
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+
     @Autowired
-    private UserRepository userRepository;
+    private CartService cartService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -53,16 +63,57 @@ public class AuthServiceImpl implements AuthService{
     private TokenRepository tokenRepository;
 
     @Override
-    public User register(UserDto userDto) throws AuthException {
-        if (existByEmail(userDto.getEmail())) {
+    public User registerBuyer(BuyerDto buyerDto) throws AuthException {
+        if (existByEmail(buyerDto.getEmail())) {
             throw new AuthException("Email is already in use");
         }
-        User newUser = modelMapper.map(userDto, User.class);
-        newUser.getRoles().add(USER);
-        return userRepository.save(newUser);
+
+        User buyer = modelMapper.map(buyerDto, User.class);
+        Role buyerRole = null;
+        try {
+            buyerRole = roleService.findByName("BUYER");
+        } catch (UserRoleNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if(buyerRole != null){
+            buyer.getRoles().add(buyerRole);
+        }
+
+        Cart cart = cartService.createCart();
+        buyer.setCartId(cart.getId());
+
+        return userRepository.save(buyer);
     }
 
-    public boolean existByEmail(String email){
+    @Override
+    public User registerSeller(SellerDto sellerDto) throws AuthException {
+        if (existByEmail(sellerDto.getEmail())) {
+            throw new AuthException("Email is already in use");
+        }
+        User seller = modelMapper.map(sellerDto, User.class);
+
+        Role sellerRole = null;
+        Role buyerRole = null;
+
+        try {
+            sellerRole = roleService.findByName("SELLER");
+            buyerRole = roleService.findByName("BUYER");
+        } catch (UserRoleNotFoundException userRoleNotFoundException) {
+            userRoleNotFoundException.printStackTrace();
+        }
+
+        if (sellerRole != null) {
+            seller.getRoles().add(sellerRole);
+            seller.getRoles().add(buyerRole);
+        }
+        Cart cart = cartService.createCart();
+        seller.setCartId(cart.getId());
+
+        return userRepository.save(seller);
+    }
+
+    public boolean existByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 

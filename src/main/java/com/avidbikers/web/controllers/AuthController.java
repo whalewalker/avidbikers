@@ -1,6 +1,6 @@
 package com.avidbikers.web.controllers;
 
-import com.avidbikers.data.dto.UserDto;
+import com.avidbikers.data.dto.BuyerDto;
 import com.avidbikers.data.model.Token;
 import com.avidbikers.data.model.User;
 import com.avidbikers.services.AuthService;
@@ -23,10 +23,10 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid UserDto userDto) {
-        log.info("Reached => {}", userDto);
+    public ResponseEntity<?> register(@RequestBody @Valid BuyerDto buyerDto) {
+        log.info("Reached => {}", buyerDto);
         try {
-            User savedUser = authService.register(userDto);
+            User savedUser = authService.registerBuyer(buyerDto);
             return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
         } catch (AuthException e) {
             return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);

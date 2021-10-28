@@ -1,9 +1,11 @@
 package com.avidbikers.services;
 
-import com.avidbikers.data.dto.UserDto;
+import com.avidbikers.data.dto.BuyerDto;
+import com.avidbikers.data.model.Role;
 import com.avidbikers.data.model.Token;
 import com.avidbikers.data.model.TokenType;
 import com.avidbikers.data.model.User;
+import com.avidbikers.data.repository.RoleRepository;
 import com.avidbikers.data.repository.TokenRepository;
 import com.avidbikers.data.repository.UserRepository;
 import com.avidbikers.security.CustomUserDetailsService;
@@ -38,7 +40,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.avidbikers.data.model.Role.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -72,9 +73,14 @@ class AuthServiceImplTest {
     @Mock
     private TokenRepository tokenRepository;
 
+    @Mock
+    private RoleRepository roleRepository;
+
     @InjectMocks
     private AuthServiceImpl authService;
     private User mockedUser;
+
+
 
     @BeforeEach
     void setUp() {
@@ -84,16 +90,19 @@ class AuthServiceImplTest {
         mockedUser.setLastName("Abdullah");
         mockedUser.setEmail("ismail@gmail.com");
         mockedUser.setPassword("pass1234");
-        mockedUser.getRoles().add(USER);
+        Role role = new Role();
+        role.setName("BUYER");
+        Role savedRole = roleRepository.save(role);
+        mockedUser.getRoles().add(savedRole);
 
         MockitoAnnotations.openMocks(this);
     }
 
 
     @Test
-    void userCanRegister() throws AuthException {
+    void userCanRegisterAsABuyer() throws AuthException {
         //Given
-        UserDto userDto = new UserDto();
+        BuyerDto userDto = new BuyerDto();
         userDto.setEmail(mockedUser.getEmail());
 
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
@@ -101,7 +110,7 @@ class AuthServiceImplTest {
         when(userRepository.save(any(User.class))).thenReturn(mockedUser);
 
         //When
-        User savedUser = authService.register(userDto);
+        User savedUser = authService.registerBuyer(userDto);
 
         //Assert
         verify(userRepository, times(1)).existsByEmail(mockedUser.getEmail());
