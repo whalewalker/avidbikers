@@ -1,10 +1,7 @@
 package com.avidbikers.services;
 
 import com.avidbikers.data.dto.BuyerDto;
-import com.avidbikers.data.model.Role;
-import com.avidbikers.data.model.Token;
-import com.avidbikers.data.model.TokenType;
-import com.avidbikers.data.model.User;
+import com.avidbikers.data.model.*;
 import com.avidbikers.data.repository.RoleRepository;
 import com.avidbikers.data.repository.TokenRepository;
 import com.avidbikers.data.repository.UserRepository;
@@ -13,6 +10,7 @@ import com.avidbikers.security.JwtTokenProvider;
 import com.avidbikers.security.UserPrincipal;
 import com.avidbikers.web.exceptions.AuthException;
 import com.avidbikers.web.exceptions.TokenException;
+import com.avidbikers.web.exceptions.UserRoleNotFoundException;
 import com.avidbikers.web.payload.AuthenticationDetails;
 import com.avidbikers.web.payload.LoginDto;
 import com.avidbikers.web.payload.PasswordRequest;
@@ -74,7 +72,13 @@ class AuthServiceImplTest {
     private TokenRepository tokenRepository;
 
     @Mock
+    private RoleService roleService;
+
+    @Mock
     private RoleRepository roleRepository;
+
+    @Mock
+    private CartService cartService;
 
     @InjectMocks
     private AuthServiceImpl authService;
@@ -100,7 +104,7 @@ class AuthServiceImplTest {
 
 
     @Test
-    void userCanRegisterAsABuyer() throws AuthException {
+    void userCanRegisterAsABuyer() throws AuthException, UserRoleNotFoundException {
         //Given
         BuyerDto userDto = new BuyerDto();
         userDto.setEmail(mockedUser.getEmail());
@@ -108,7 +112,8 @@ class AuthServiceImplTest {
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(modelMapper.map(userDto, User.class)).thenReturn(mockedUser);
         when(userRepository.save(any(User.class))).thenReturn(mockedUser);
-
+        when(roleService.findByName("BUYER")).thenReturn(new Role());
+        when(cartService.createCart()).thenReturn(new Cart());
         //When
         User savedUser = authService.registerBuyer(userDto);
 
