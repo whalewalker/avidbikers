@@ -17,9 +17,6 @@ public class SellerDto {
     @Email(message = "Invalid email")
     private String email;
 
-    @NotBlank(message = "phone number cannot be blank")
-    private String phoneNumber;
-
     @Size(min = 6, max = 20, message = "Invalid password")
     private String password;
 }

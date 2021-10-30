@@ -55,7 +55,6 @@ class AuthControllerTest {
         userDto.setLastName("Abdul");
         userDto.setEmail("ismail1@gmail.com");
         userDto.setPassword("password123");
-        userDto.setPhoneNumber("09075617573");
 
         registerJsonObject = objectMapper.writeValueAsString(userDto);
     }
